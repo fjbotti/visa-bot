@@ -93,21 +93,27 @@ Cuando el usuario quiera monitorear turnos:
 
 ```bash
 # Usar cuando el usuario active monitoreo
-node /home/clawd/agents/visabot/skills/visabot/scripts/monitor-slots.js --tramite-id={id}
+node /home/clawd/dev/agents/visabot/skill/scripts/monitor-slots.js --tramite-id={id}
+
+# Dry run (ver qué haría sin ejecutar)
+node /home/clawd/dev/agents/visabot/skill/scripts/monitor-slots.js --tramite-id={id} --dry-run
+
+# Forzar uso de Steel aunque no haya credenciales
+node /home/clawd/dev/agents/visabot/skill/scripts/monitor-slots.js --tramite-id={id} --force-steel
 ```
 
 ### Reservar turno (cuando hay disponibilidad)
 
 ```bash
 # Usar solo cuando el usuario confirme reservar
-node /home/clawd/agents/visabot/skills/visabot/scripts/book-appointment.js --tramite-id={id} --slot-id={slot}
+node /home/clawd/dev/agents/visabot/skill/scripts/book-appointment.js --tramite-id={id} --slot-id={slot}
 ```
 
 ### Verificar estado de Steel (conexión)
 
 ```bash
 # Verificar si Steel está configurado
-node /home/clawd/agents/visabot/skills/visabot/scripts/check-steel.js
+node /home/clawd/dev/agents/visabot/skill/scripts/check-steel.js
 ```
 
 ---
@@ -118,7 +124,7 @@ node /home/clawd/agents/visabot/skills/visabot/scripts/check-steel.js
 
 Guardá el estado en JSON después de cada interacción significativa:
 
-**Path:** `/home/clawd/agents/visabot/skills/visabot/storage/tramites/{tramite_id}.json`
+**Path:** `/home/clawd/dev/agents/visabot/skill/storage/tramites/{tramite_id}.json`
 
 ```json
 {
@@ -196,21 +202,94 @@ Revisé {consulate} y no hay turnos para las fechas que indicaste.
 ## Templates de Mensajes
 
 ### Bienvenida
-Ver: `/home/clawd/agents/visabot/skills/visabot/templates/messages/welcome.md`
+Ver: `/home/clawd/dev/agents/visabot/skill/templates/messages/welcome.md`
 
 ### Turno encontrado
-Ver: `/home/clawd/agents/visabot/skills/visabot/templates/messages/slot-found.md`
+Ver: `/home/clawd/dev/agents/visabot/skill/templates/messages/slot-found.md`
 
 ### Checklist
-Ver: `/home/clawd/agents/visabot/skills/visabot/templates/messages/checklist.md`
+Ver: `/home/clawd/dev/agents/visabot/skill/templates/messages/checklist.md`
+
+---
+
+## Preparación de Entrevista
+
+### Comandos de Entrevista
+
+| Comando | Descripción |
+|---------|-------------|
+| `/visa entrevista tips` | Ver consejos generales para la entrevista |
+| `/visa entrevista preguntas` | Ver todas las preguntas comunes |
+| `/visa entrevista simulacro` | Iniciar un simulacro interactivo |
+
+### Script de Preparación
+
+```bash
+# Ver todas las preguntas
+node /home/clawd/dev/agents/visabot/skill/scripts/interview-prep.js --list
+
+# Ver preguntas de una categoría específica
+node /home/clawd/dev/agents/visabot/skill/scripts/interview-prep.js --list --category=ties
+
+# Simulacro interactivo (10 preguntas aleatorias)
+node /home/clawd/dev/agents/visabot/skill/scripts/interview-prep.js --simulate
+
+# Simulacro con 5 preguntas de una categoría
+node /home/clawd/dev/agents/visabot/skill/scripts/interview-prep.js --simulate --count=5 --category=purpose
+
+# Ver tips de entrevista
+node /home/clawd/dev/agents/visabot/skill/scripts/interview-prep.js --tips
+```
+
+### Categorías de Preguntas
+
+| Categoría | Descripción | Cantidad |
+|-----------|-------------|----------|
+| `purpose` | Propósito del viaje | 5 |
+| `ties` | Lazos con el país | 6 |
+| `financial` | Situación financiera | 4 |
+| `travel_history` | Historial de viajes | 4 |
+| `usa_contacts` | Contactos en USA | 3 |
+| `education` | Educación | 2 |
+| `business` | Negocios (B1) | 3 |
+| `tricky` | Preguntas difíciles | 5 |
+
+### Archivos de Entrevista
+
+- Preguntas B1/B2: `/home/clawd/dev/agents/visabot/skill/templates/interview/questions-b1b2.json`
+- Tips: `/home/clawd/dev/agents/visabot/skill/templates/interview/tips.md`
+
+---
+
+## Automatización DS-160
+
+### Script de Auto-llenado
+
+```bash
+# Ver qué datos se llenarían (sin ejecutar)
+node /home/clawd/dev/agents/visabot/skill/scripts/fill-ds160.js --tramite-id={id} --dry-run
+
+# Llenar solo sección personal
+node /home/clawd/dev/agents/visabot/skill/scripts/fill-ds160.js --tramite-id={id} --section=personal
+
+# Retomar sesión anterior
+node /home/clawd/dev/agents/visabot/skill/scripts/fill-ds160.js --tramite-id={id} --resume
+```
+
+**IMPORTANTE:** 
+- El script NO hace submit automático
+- Siempre revisar cada página manualmente antes de continuar
+- Se guardan capturas de pantalla de cada paso
+- Requiere Steel Cloud API configurado
 
 ---
 
 ## Datos de Referencia
 
-- Consulados USA: `/home/clawd/agents/visabot/skills/visabot/data/consulates-usa.json`
-- Campos DS-160: `/home/clawd/agents/visabot/skills/visabot/templates/forms/ds160-fields.json`
-- Ocupaciones: `/home/clawd/agents/visabot/skills/visabot/data/occupations.json`
+- Consulados USA: `/home/clawd/dev/agents/visabot/skill/data/consulates-usa.json`
+- Campos DS-160: `/home/clawd/dev/agents/visabot/skill/templates/forms/ds160-fields.json`
+- Ocupaciones: `/home/clawd/dev/agents/visabot/skill/data/occupations.json`
+- Preguntas entrevista: `/home/clawd/dev/agents/visabot/skill/templates/interview/`
 
 ---
 

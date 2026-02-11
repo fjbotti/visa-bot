@@ -1,0 +1,249 @@
+{
+  "visaType": "B1/B2",
+  "description": "Preguntas comunes de entrevista para visa de turismo/negocios de Estados Unidos",
+  "version": "2024.1",
+  "categories": [
+    {
+      "id": "purpose",
+      "name": "Propósito del Viaje",
+      "questions": [
+        {
+          "id": 1,
+          "question": "¿Por qué quiere viajar a Estados Unidos?",
+          "tips": "Sé específico. Mencioná lugares, actividades o eventos concretos.",
+          "redFlags": ["Respuestas vagas", "No tener plan claro", "Decir 'para conocer'"]
+        },
+        {
+          "id": 2,
+          "question": "¿Cuánto tiempo planea quedarse?",
+          "tips": "Sé realista. Turismo típico: 2-4 semanas. Negocios: días específicos.",
+          "redFlags": ["Tiempos muy largos sin justificación", "Decir 'no sé'"]
+        },
+        {
+          "id": 3,
+          "question": "¿Cuándo planea viajar?",
+          "tips": "Tené fechas tentativas. Mostrá que tenés un plan.",
+          "redFlags": ["Sin fechas", "Fechas que coinciden con fin de año escolar de hijos"]
+        },
+        {
+          "id": 4,
+          "question": "¿A dónde va a ir específicamente?",
+          "tips": "Nombrá ciudades, atracciones. Mostrá que investigaste.",
+          "redFlags": ["No saber qué visitar", "Solo decir 'Nueva York'"]
+        },
+        {
+          "id": 5,
+          "question": "¿Tiene reservaciones de hotel o vuelo?",
+          "tips": "No es obligatorio, pero si tenés, mostralas. Decí que esperabas la visa.",
+          "redFlags": ["Mentir sobre reservas que no existen"]
+        }
+      ]
+    },
+    {
+      "id": "ties",
+      "name": "Lazos con tu País",
+      "questions": [
+        {
+          "id": 6,
+          "question": "¿A qué se dedica? / ¿Cuál es su trabajo?",
+          "tips": "Explicá tu rol claramente. Si sos empleado, mencioná la empresa y antigüedad.",
+          "redFlags": ["Trabajo informal sin comprobante", "Desempleo prolongado"]
+        },
+        {
+          "id": 7,
+          "question": "¿Hace cuánto trabaja ahí?",
+          "tips": "La estabilidad laboral es positiva. Mencioná logros o responsabilidades.",
+          "redFlags": ["Trabajos muy cortos o recientes", "Muchos cambios de empleo"]
+        },
+        {
+          "id": 8,
+          "question": "¿Cuánto gana?",
+          "tips": "Sé honesto. Si tenés otros ingresos (alquileres, inversiones), mencionalos.",
+          "redFlags": ["Ingresos muy bajos", "No poder justificar el costo del viaje"]
+        },
+        {
+          "id": 9,
+          "question": "¿Tiene propiedades a su nombre?",
+          "tips": "Casa, auto, terreno - todo suma como lazo. Mencioná si tenés.",
+          "redFlags": ["No tener nada a tu nombre"]
+        },
+        {
+          "id": 10,
+          "question": "¿Tiene familia aquí? ¿Quién?",
+          "tips": "Mencioná cónyuge, hijos, padres dependientes. Son lazos fuertes.",
+          "redFlags": ["No tener familia", "Familia toda en USA"]
+        },
+        {
+          "id": 11,
+          "question": "¿Por qué regresaría a su país?",
+          "tips": "Esta es LA pregunta clave. Mencioná trabajo, familia, propiedades, proyectos.",
+          "redFlags": ["No tener respuesta clara", "Solo decir 'mi familia'"]
+        }
+      ]
+    },
+    {
+      "id": "financial",
+      "name": "Situación Financiera",
+      "questions": [
+        {
+          "id": 12,
+          "question": "¿Quién paga este viaje?",
+          "tips": "Si pagás vos, mostrá que tenés los fondos. Si paga otro, explicá la relación.",
+          "redFlags": ["No poder explicar quién paga", "Sponsor desconocido"]
+        },
+        {
+          "id": 13,
+          "question": "¿Cuánto cuesta el viaje aproximadamente?",
+          "tips": "Tené un estimado realista: pasajes + hotel + gastos diarios.",
+          "redFlags": ["No tener idea del costo", "Subestimar groseramente"]
+        },
+        {
+          "id": 14,
+          "question": "¿Tiene ahorros? ¿Cuánto?",
+          "tips": "Si llevás resumen bancario, mencionalo. No exageres.",
+          "redFlags": ["Depósitos grandes recientes sin explicación"]
+        },
+        {
+          "id": 15,
+          "question": "¿Tiene tarjeta de crédito internacional?",
+          "tips": "Visa/Mastercard internacional es positivo. Mencioná el límite si es bueno.",
+          "redFlags": ["No tener forma de pago en USA"]
+        }
+      ]
+    },
+    {
+      "id": "travel_history",
+      "name": "Historial de Viajes",
+      "questions": [
+        {
+          "id": 16,
+          "question": "¿Ha viajado a otros países?",
+          "tips": "Mencioná países visitados, especialmente USA/Europa/Canadá.",
+          "redFlags": ["Nunca haber salido del país"]
+        },
+        {
+          "id": 17,
+          "question": "¿Ha estado en Estados Unidos antes?",
+          "tips": "Si sí, contá cuándo, cuánto tiempo, y qué hiciste. Si cumpliste, es positivo.",
+          "redFlags": ["Overstay previo", "Trabajo ilegal", "Mentir sobre viajes anteriores"]
+        },
+        {
+          "id": 18,
+          "question": "¿Ha tenido visa americana antes?",
+          "tips": "Si sí, traé la visa anterior (aunque esté vencida).",
+          "redFlags": ["Visa rechazada previamente sin explicación"]
+        },
+        {
+          "id": 19,
+          "question": "¿Le han negado alguna visa?",
+          "tips": "NUNCA mientas. Si te rechazaron, explicá por qué creés que fue y qué cambió.",
+          "redFlags": ["Mentir sobre rechazos", "No saber por qué te rechazaron"]
+        }
+      ]
+    },
+    {
+      "id": "usa_contacts",
+      "name": "Contactos en Estados Unidos",
+      "questions": [
+        {
+          "id": 20,
+          "question": "¿Tiene familia en Estados Unidos?",
+          "tips": "Sé honesto. Mencioná el status migratorio si lo sabés.",
+          "redFlags": ["Mentir sobre familiares", "Familiares ilegales"]
+        },
+        {
+          "id": 21,
+          "question": "¿Dónde se va a quedar?",
+          "tips": "Hotel es más simple. Si es con familia/amigos, tené su dirección.",
+          "redFlags": ["No saber dónde quedarse"]
+        },
+        {
+          "id": 22,
+          "question": "¿Conoce a alguien en Estados Unidos?",
+          "tips": "Amigos, conocidos - mencioná si aplica, pero no son lazos fuertes.",
+          "redFlags": ["Novio/a en USA puede ser red flag"]
+        }
+      ]
+    },
+    {
+      "id": "education",
+      "name": "Educación",
+      "questions": [
+        {
+          "id": 23,
+          "question": "¿Cuál es su nivel de educación?",
+          "tips": "Mencioná tu título, universidad, año de graduación.",
+          "redFlags": ["Inconsistencias con el DS-160"]
+        },
+        {
+          "id": 24,
+          "question": "¿Está estudiando actualmente?",
+          "tips": "Si sos estudiante, explicá qué y dónde. Es un lazo.",
+          "redFlags": ["Abandonar estudios para viajar"]
+        }
+      ]
+    },
+    {
+      "id": "business",
+      "name": "Negocios (si aplica B1)",
+      "questions": [
+        {
+          "id": 25,
+          "question": "¿Con qué empresa se va a reunir?",
+          "tips": "Tené nombre, dirección, contacto de la empresa en USA.",
+          "redFlags": ["No tener datos de contacto"]
+        },
+        {
+          "id": 26,
+          "question": "¿Cuál es el propósito de la reunión?",
+          "tips": "Sé específico: conferencia, capacitación, reunión con clientes.",
+          "redFlags": ["Propósito vago", "Parecer que vas a trabajar"]
+        },
+        {
+          "id": 27,
+          "question": "¿Tiene carta de invitación?",
+          "tips": "Si la tenés, traela. No es obligatoria pero ayuda.",
+          "redFlags": ["Carta genérica o falsa"]
+        }
+      ]
+    },
+    {
+      "id": "tricky",
+      "name": "Preguntas Difíciles",
+      "questions": [
+        {
+          "id": 28,
+          "question": "¿Por qué debería darle la visa?",
+          "tips": "Resumí: tenés trabajo estable, familia, propiedades, y un plan de viaje claro.",
+          "redFlags": ["No poder resumir tus fortalezas"]
+        },
+        {
+          "id": 29,
+          "question": "¿Qué haría si le niego la visa hoy?",
+          "tips": "Decí que respetarías la decisión y aplicarías de nuevo cuando tengas más lazos.",
+          "redFlags": ["Enojarse", "Decir que es injusto"]
+        },
+        {
+          "id": 30,
+          "question": "Si le doy visa de 10 años, ¿cada cuánto vendría?",
+          "tips": "Sé realista: una vez al año, cuando pueda tomar vacaciones.",
+          "redFlags": ["Decir que te quedarías mucho tiempo cada vez"]
+        },
+        {
+          "id": 31,
+          "question": "¿Tiene pensado quedarse en Estados Unidos?",
+          "tips": "NO. Dejá claro que tu vida está en tu país.",
+          "redFlags": ["Dudar", "Decir 'tal vez'"]
+        },
+        {
+          "id": 32,
+          "question": "¿Ha trabajado ilegalmente en USA?",
+          "tips": "Si no, decí que no. Si sí, no mientas - pero esto complica mucho.",
+          "redFlags": ["Mentir sobre trabajo ilegal"]
+        }
+      ]
+    }
+  ],
+  "totalQuestions": 32,
+  "lastUpdated": "2024-02"
+}

@@ -2,7 +2,7 @@
 /**
  * Monitor visa appointment slot availability
  * 
- * Usage: node monitor-slots.js --tramite-id=<id> [--dry-run]
+ * Usage: node monitor-slots.js --tramite-id=<id> [--dry-run] [--force-steel]
  * 
  * This script checks for available appointment slots at the specified
  * consulate and notifies the user if slots are found.
@@ -19,6 +19,13 @@ const { execSync } = require('child_process');
 // Configuration
 const STORAGE_PATH = path.join(__dirname, '..', 'storage', 'tramites');
 const MONITORING_PATH = path.join(__dirname, '..', 'storage', 'monitoring');
+
+// Ensure directories exist
+[STORAGE_PATH, MONITORING_PATH].forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
 
 // Parse arguments
 function parseArgs() {
@@ -48,24 +55,11 @@ function saveTramite(tramite) {
   fs.writeFileSync(filePath, JSON.stringify(tramite, null, 2));
 }
 
-// Check if Steel is available
-function isSteelAvailable() {
-  try {
-    const result = execSync('node ' + path.join(__dirname, 'check-steel.js'), {
-      encoding: 'utf-8',
-      stdio: ['pipe', 'pipe', 'pipe']
-    });
-    return result.includes('STEEL_CONFIGURED');
-  } catch (e) {
-    return false;
-  }
-}
-
 // Get Steel API key
 function getSteelApiKey() {
   const locations = [
     process.env.STEEL_API_KEY,
-    path.join(process.env.HOME, '.config/secrets/steel_api_key'),
+    path.join(process.env.HOME || '/home/clawd', '.config/secrets/steel_api_key'),
   ];
 
   for (const loc of locations) {
@@ -81,7 +75,13 @@ function getSteelApiKey() {
   return null;
 }
 
-// Monitor using Steel (automated)
+// Check if Steel is available
+function isSteelAvailable() {
+  const apiKey = getSteelApiKey();
+  return !!apiKey;
+}
+
+// Monitor using Steel (automated) - IMPLEMENTACIÓN COMPLETA
 async function monitorWithSteel(tramite) {
   console.log('🤖 Using Steel Cloud for automated monitoring...\n');
   
@@ -90,34 +90,228 @@ async function monitorWithSteel(tramite) {
     throw new Error('Steel API key not found');
   }
 
-  // For ustraveldocs.com (USA visa appointments)
+  // Dynamic imports for ES modules
+  let Steel, chromium;
+  try {
+    Steel = (await import('steel-sdk')).default;
+    chromium = (await import('playwright')).chromium;
+  } catch (e) {
+    throw new Error(`Dependencies not installed. Run: npm install steel-sdk playwright\n${e.message}`);
+  }
+
+  // For ais.usvisa-info.com (USA visa appointments)
   const consulate = tramite.monitoring?.consulate || 'Buenos Aires';
   const visaType = tramite.type || 'B1B2';
+  const credentials = tramite.monitoring?.credentials || null;
   
   console.log(`📍 Consulate: ${consulate}`);
   console.log(`📋 Visa Type: ${visaType}`);
   console.log(`📅 Date Range: ${tramite.monitoring?.dateFrom || 'Any'} - ${tramite.monitoring?.dateTo || 'Any'}`);
+  console.log(`🔐 Credentials: ${credentials ? 'Saved' : 'Not saved (manual login needed)'}\n`);
   
-  // TODO: Implement actual Steel browser automation
-  // This would:
-  // 1. Create a Steel session
-  // 2. Navigate to ustraveldocs.com
-  // 3. Login with saved credentials (if any)
-  // 4. Check available slots
-  // 5. Return results
-
-  // For now, return placeholder
-  console.log('\n⏳ Checking availability...');
+  const client = new Steel({ steelAPIKey: apiKey });
+  let session = null;
+  let browser = null;
   
-  // Simulated response (replace with actual Steel implementation)
-  const mockResult = {
+  const result = {
     available: false,
     slots: [],
     checkedAt: new Date().toISOString(),
-    nextCheck: new Date(Date.now() + 15 * 60 * 1000).toISOString()
+    nextCheck: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+    mode: 'STEEL',
+    screenshots: []
   };
 
-  return mockResult;
+  try {
+    // Create Steel session
+    console.log('🚀 Creating Steel session...');
+    session = await client.sessions.create({
+      useProxy: false,       // Hobby plan
+      solveCaptcha: false,   // Hobby plan
+      timeout: 300000,       // 5 min timeout
+    });
+    
+    console.log(`   Session ID: ${session.id}`);
+    console.log(`   Live View: ${session.sessionViewerUrl}\n`);
+    result.sessionViewerUrl = session.sessionViewerUrl;
+    
+    // Connect Playwright to Steel browser
+    console.log('🌐 Connecting browser...');
+    browser = await chromium.connectOverCDP(
+      `wss://connect.steel.dev?apiKey=${apiKey}&sessionId=${session.id}`
+    );
+    
+    const context = browser.contexts()[0];
+    const page = context.pages()[0] || await context.newPage();
+    
+    // Navigate to visa appointment site
+    const loginUrl = 'https://ais.usvisa-info.com/es-ar/niv/users/sign_in';
+    console.log(`📄 Navigating to: ${loginUrl}`);
+    
+    await page.goto(loginUrl, { 
+      waitUntil: 'networkidle', 
+      timeout: 60000 
+    });
+    
+    // Take screenshot
+    const screenshotPath = path.join(MONITORING_PATH, `${tramite.id}-login.png`);
+    await page.screenshot({ path: screenshotPath });
+    console.log(`📸 Screenshot saved: ${screenshotPath}`);
+    result.screenshots.push(screenshotPath);
+    
+    // Check if we need to login
+    const pageTitle = await page.title();
+    console.log(`   Page title: ${pageTitle}`);
+    
+    // Try to login if credentials available
+    if (credentials && credentials.email && credentials.password) {
+      console.log('\n🔑 Attempting login...');
+      
+      try {
+        // Fill email
+        await page.fill('input[name="user[email]"]', credentials.email);
+        // Fill password
+        await page.fill('input[name="user[password]"]', credentials.password);
+        // Accept policy checkbox if exists
+        try {
+          await page.check('input[name="policy_confirmed"]', { timeout: 2000 });
+        } catch (e) {}
+        
+        // Click sign in button
+        await page.click('input[type="submit"]');
+        
+        // Wait for navigation
+        await page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 });
+        
+        console.log('   Login submitted, checking result...');
+        
+        // Take screenshot after login
+        const postLoginPath = path.join(MONITORING_PATH, `${tramite.id}-postlogin.png`);
+        await page.screenshot({ path: postLoginPath });
+        result.screenshots.push(postLoginPath);
+        
+        // Check for login errors
+        const errorElement = await page.$('.alert-error, .error, .flash-error');
+        if (errorElement) {
+          const errorText = await errorElement.textContent();
+          console.log(`   ❌ Login error: ${errorText}`);
+          result.loginError = errorText;
+        } else {
+          console.log('   ✅ Login appears successful');
+          
+          // Navigate to appointments page
+          console.log('\n📅 Looking for appointment availability...');
+          
+          // Try to find the appointments/schedule link
+          try {
+            // Common selectors for appointment link
+            const appointmentSelectors = [
+              'a[href*="appointment"]',
+              'a[href*="schedule"]',
+              'a:has-text("Schedule")',
+              'a:has-text("Appointment")',
+              'a:has-text("Cita")',
+              '.attend-appointment',
+            ];
+            
+            for (const selector of appointmentSelectors) {
+              try {
+                const link = await page.$(selector);
+                if (link) {
+                  await link.click();
+                  await page.waitForLoadState('networkidle', { timeout: 15000 });
+                  break;
+                }
+              } catch (e) {}
+            }
+            
+            // Take screenshot of appointments page
+            const appointmentsPath = path.join(MONITORING_PATH, `${tramite.id}-appointments.png`);
+            await page.screenshot({ path: appointmentsPath, fullPage: true });
+            result.screenshots.push(appointmentsPath);
+            
+            // Try to find available slots
+            // Look for date picker or available dates
+            const pageContent = await page.content();
+            
+            // Check for "no appointments" messages
+            const noAppointmentPatterns = [
+              /no.*appointments.*available/i,
+              /no.*citas.*disponibles/i,
+              /no hay fechas/i,
+              /not.*available/i,
+            ];
+            
+            const hasNoAppointments = noAppointmentPatterns.some(p => p.test(pageContent));
+            
+            if (hasNoAppointments) {
+              console.log('   😔 No appointments currently available');
+              result.available = false;
+            } else {
+              // Try to extract available dates
+              // This depends heavily on the site structure
+              const dateElements = await page.$$('.datepicker td:not(.disabled), .available-date, .calendar-day.available');
+              
+              if (dateElements.length > 0) {
+                console.log(`   🎉 Found ${dateElements.length} potential available dates!`);
+                result.available = true;
+                
+                // Try to extract the dates
+                for (const el of dateElements.slice(0, 10)) { // Max 10
+                  try {
+                    const dateText = await el.textContent();
+                    const dateTitle = await el.getAttribute('title') || await el.getAttribute('data-date');
+                    result.slots.push({
+                      date: dateTitle || dateText,
+                      raw: dateText
+                    });
+                  } catch (e) {}
+                }
+              }
+            }
+            
+          } catch (navError) {
+            console.log(`   ⚠️ Could not navigate to appointments: ${navError.message}`);
+          }
+        }
+        
+      } catch (loginError) {
+        console.log(`   ❌ Login failed: ${loginError.message}`);
+        result.loginError = loginError.message;
+      }
+      
+    } else {
+      console.log('\n⚠️ No credentials saved - cannot check appointments automatically');
+      console.log('   Save credentials with: /visa config credentials');
+      result.needsCredentials = true;
+    }
+    
+    // Final screenshot
+    const finalPath = path.join(MONITORING_PATH, `${tramite.id}-final.png`);
+    await page.screenshot({ path: finalPath, fullPage: true });
+    result.screenshots.push(finalPath);
+    
+  } catch (error) {
+    console.error(`\n❌ Steel error: ${error.message}`);
+    result.error = error.message;
+    throw error;
+    
+  } finally {
+    // Cleanup
+    if (browser) {
+      try {
+        await browser.close();
+      } catch (e) {}
+    }
+    if (session) {
+      try {
+        await client.sessions.release(session.id);
+        console.log('\n🧹 Session released');
+      } catch (e) {}
+    }
+  }
+  
+  return result;
 }
 
 // Fallback: Generate manual check instructions
@@ -127,10 +321,11 @@ function generateManualInstructions(tramite) {
   
   return {
     mode: 'MANUAL',
+    available: false,
     instructions: `
 📋 **Instrucciones para verificar turnos manualmente**
 
-**Sistema:** US Travel Docs (ustraveldocs.com)
+**Sistema:** US Travel Docs (ais.usvisa-info.com)
 **Consulado:** ${consulate}
 **Tipo de visa:** ${visaType}
 
@@ -153,12 +348,14 @@ Avisame con el comando: /visa turno encontrado
 - Estado de visa: https://ceac.state.gov/CEACStatTracker/Status.aspx
 `.trim(),
     checkedAt: new Date().toISOString(),
-    fallbackReason: 'Steel Cloud no configurado'
+    fallbackReason: 'Steel Cloud no configurado o falló'
   };
 }
 
 // Main monitoring function
-async function monitor(tramiteId, dryRun = false) {
+async function monitor(tramiteId, options = {}) {
+  const { dryRun = false, forceSteel = false } = options;
+  
   console.log('═══════════════════════════════════════════');
   console.log('       VISABOT - Monitor de Turnos');
   console.log('═══════════════════════════════════════════\n');
@@ -177,7 +374,7 @@ async function monitor(tramiteId, dryRun = false) {
   }
 
   // Check if monitoring is active
-  if (!tramite.monitoring?.active) {
+  if (!tramite.monitoring?.active && !forceSteel) {
     console.log('⚠️ Monitoreo no activo para este trámite');
     console.log('   Activá el monitoreo con: /visa monitorear');
     process.exit(0);
@@ -187,11 +384,11 @@ async function monitor(tramiteId, dryRun = false) {
   let result;
   const steelAvailable = isSteelAvailable();
 
-  if (steelAvailable && !dryRun) {
+  if ((steelAvailable || forceSteel) && !dryRun) {
     try {
       result = await monitorWithSteel(tramite);
     } catch (e) {
-      console.log(`⚠️ Steel error: ${e.message}`);
+      console.log(`\n⚠️ Steel error: ${e.message}`);
       console.log('   Switching to manual mode...\n');
       result = generateManualInstructions(tramite);
     }
@@ -207,7 +404,7 @@ async function monitor(tramiteId, dryRun = false) {
   }
 
   // Output result
-  console.log('═══════════════════════════════════════════');
+  console.log('\n═══════════════════════════════════════════');
   console.log('                RESULTADO');
   console.log('═══════════════════════════════════════════\n');
 
@@ -221,8 +418,13 @@ async function monitor(tramiteId, dryRun = false) {
     console.log(`📅 Verificado: ${result.checkedAt}`);
     console.log('\nSlots encontrados:');
     result.slots.forEach((slot, i) => {
-      console.log(`  ${i + 1}. ${slot.date} - ${slot.time} - ${slot.location}`);
+      console.log(`  ${i + 1}. ${slot.date} ${slot.time ? `- ${slot.time}` : ''} ${slot.location ? `- ${slot.location}` : ''}`);
     });
+    
+    if (result.screenshots?.length > 0) {
+      console.log('\n📸 Screenshots guardados:');
+      result.screenshots.forEach(s => console.log(`   - ${s}`));
+    }
     
     // Update tramite status
     if (!dryRun) {
@@ -234,6 +436,19 @@ async function monitor(tramiteId, dryRun = false) {
     console.log('😔 No hay turnos disponibles');
     console.log(`📅 Verificado: ${result.checkedAt}`);
     console.log(`⏰ Próxima verificación: ${result.nextCheck}`);
+    
+    if (result.error) {
+      console.log(`⚠️ Error: ${result.error}`);
+    }
+    
+    if (result.needsCredentials) {
+      console.log('\n💡 Para verificación automática, guardá tus credenciales');
+    }
+    
+    if (result.screenshots?.length > 0) {
+      console.log('\n📸 Screenshots guardados:');
+      result.screenshots.forEach(s => console.log(`   - ${s}`));
+    }
   }
 
   // Save monitoring log
@@ -241,27 +456,50 @@ async function monitor(tramiteId, dryRun = false) {
     const logPath = path.join(MONITORING_PATH, `${tramiteId}-log.json`);
     let log = [];
     if (fs.existsSync(logPath)) {
-      log = JSON.parse(fs.readFileSync(logPath, 'utf-8'));
+      try {
+        log = JSON.parse(fs.readFileSync(logPath, 'utf-8'));
+      } catch (e) {}
     }
     log.push({
       timestamp: new Date().toISOString(),
       mode: result.mode || 'AUTOMATED',
       available: result.available || false,
-      slotsCount: result.slots?.length || 0
+      slotsCount: result.slots?.length || 0,
+      error: result.error || null
     });
     // Keep last 100 entries
     if (log.length > 100) log = log.slice(-100);
     fs.writeFileSync(logPath, JSON.stringify(log, null, 2));
   }
 
+  // Return result for programmatic use
   return result;
 }
 
 // Run
 const args = parseArgs();
 if (!args['tramite-id']) {
-  console.error('Usage: node monitor-slots.js --tramite-id=<id> [--dry-run]');
+  console.log(`
+╔════════════════════════════════════════════════════════════════╗
+║         📋 VISABOT - Monitor de Turnos                        ║
+╚════════════════════════════════════════════════════════════════╝
+
+Uso:
+  node monitor-slots.js --tramite-id=<id> [opciones]
+
+Opciones:
+  --tramite-id=ID    ID del trámite a monitorear (requerido)
+  --dry-run          Solo mostrar qué haría, sin ejecutar
+  --force-steel      Forzar uso de Steel aunque no haya credenciales
+
+Ejemplo:
+  node monitor-slots.js --tramite-id=abc123
+  node monitor-slots.js --tramite-id=abc123 --dry-run
+`);
   process.exit(1);
 }
 
-monitor(args['tramite-id'], args['dry-run']).catch(console.error);
+monitor(args['tramite-id'], {
+  dryRun: args['dry-run'],
+  forceSteel: args['force-steel']
+}).catch(console.error);
