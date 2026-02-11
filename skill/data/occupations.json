@@ -1,0 +1,25 @@
+{
+  "occupations": [
+    { "code": "UNEMPLOYED", "label": "Sin empleo / Desempleado", "category": "Not Working" },
+    { "code": "RETIRED", "label": "Jubilado/Retirado", "category": "Not Working" },
+    { "code": "STUDENT", "label": "Estudiante", "category": "Student" },
+    { "code": "HOMEMAKER", "label": "Ama de casa", "category": "Not Working" },
+    { "code": "SELF_EMPLOYED", "label": "Trabajador independiente", "category": "Self Employed" },
+    { "code": "BUSINESS_OWNER", "label": "Dueño de empresa", "category": "Self Employed" },
+    { "code": "PROFESSIONAL", "label": "Profesional (abogado, médico, etc.)", "category": "Professional" },
+    { "code": "MANAGER", "label": "Gerente / Director", "category": "Management" },
+    { "code": "TEACHER", "label": "Docente / Profesor", "category": "Education" },
+    { "code": "ENGINEER", "label": "Ingeniero", "category": "Technical" },
+    { "code": "IT_PROFESSIONAL", "label": "Profesional de IT", "category": "Technical" },
+    { "code": "ACCOUNTANT", "label": "Contador", "category": "Professional" },
+    { "code": "SALES", "label": "Ventas / Comercial", "category": "Sales" },
+    { "code": "ADMIN", "label": "Administrativo", "category": "Administrative" },
+    { "code": "HEALTHCARE", "label": "Profesional de salud", "category": "Healthcare" },
+    { "code": "ARTIST", "label": "Artista / Creativo", "category": "Arts" },
+    { "code": "TRADESPERSON", "label": "Oficio técnico (electricista, plomero, etc.)", "category": "Trades" },
+    { "code": "AGRICULTURE", "label": "Agricultura / Ganadería", "category": "Agriculture" },
+    { "code": "GOVERNMENT", "label": "Empleado público", "category": "Government" },
+    { "code": "MILITARY", "label": "Militar / Fuerzas de seguridad", "category": "Military" },
+    { "code": "OTHER", "label": "Otro", "category": "Other" }
+  ]
+}

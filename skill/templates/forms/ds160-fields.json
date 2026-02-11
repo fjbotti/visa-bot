@@ -1,0 +1,103 @@
+{
+  "formId": "DS-160",
+  "version": "2024",
+  "sections": [
+    {
+      "id": "personal",
+      "name": "Información Personal",
+      "fields": [
+        { "id": "surname", "label": "Apellido(s)", "type": "text", "required": true },
+        { "id": "givenName", "label": "Nombre(s)", "type": "text", "required": true },
+        { "id": "fullNameNative", "label": "Nombre completo en alfabeto nativo", "type": "text", "required": false },
+        { "id": "otherNames", "label": "¿Ha usado otros nombres?", "type": "boolean", "required": true },
+        { "id": "sex", "label": "Sexo", "type": "select", "options": ["Male", "Female"], "required": true },
+        { "id": "maritalStatus", "label": "Estado civil", "type": "select", "options": ["Single", "Married", "Divorced", "Widowed", "Separated"], "required": true },
+        { "id": "dateOfBirth", "label": "Fecha de nacimiento", "type": "date", "required": true },
+        { "id": "cityOfBirth", "label": "Ciudad de nacimiento", "type": "text", "required": true },
+        { "id": "countryOfBirth", "label": "País de nacimiento", "type": "country", "required": true },
+        { "id": "nationality", "label": "Nacionalidad", "type": "country", "required": true }
+      ]
+    },
+    {
+      "id": "passport",
+      "name": "Información del Pasaporte",
+      "fields": [
+        { "id": "passportNumber", "label": "Número de pasaporte", "type": "text", "required": true },
+        { "id": "passportBookNumber", "label": "Número de libro (si aplica)", "type": "text", "required": false },
+        { "id": "passportCountry", "label": "País emisor", "type": "country", "required": true },
+        { "id": "passportCity", "label": "Ciudad de emisión", "type": "text", "required": true },
+        { "id": "passportIssueDate", "label": "Fecha de emisión", "type": "date", "required": true },
+        { "id": "passportExpiryDate", "label": "Fecha de vencimiento", "type": "date", "required": true },
+        { "id": "lostPassport", "label": "¿Ha perdido un pasaporte?", "type": "boolean", "required": true }
+      ]
+    },
+    {
+      "id": "contact",
+      "name": "Información de Contacto",
+      "fields": [
+        { "id": "address", "label": "Dirección completa", "type": "text", "required": true },
+        { "id": "city", "label": "Ciudad", "type": "text", "required": true },
+        { "id": "state", "label": "Provincia/Estado", "type": "text", "required": true },
+        { "id": "postalCode", "label": "Código postal", "type": "text", "required": true },
+        { "id": "country", "label": "País", "type": "country", "required": true },
+        { "id": "phone", "label": "Teléfono", "type": "phone", "required": true },
+        { "id": "email", "label": "Email", "type": "email", "required": true }
+      ]
+    },
+    {
+      "id": "travel",
+      "name": "Información del Viaje",
+      "fields": [
+        { "id": "purpose", "label": "Propósito del viaje", "type": "select", "options": ["Tourism", "Business", "Both"], "required": true },
+        { "id": "specificPurpose", "label": "Descripción específica", "type": "textarea", "required": true },
+        { "id": "arrivalDate", "label": "Fecha de llegada prevista", "type": "date", "required": true },
+        { "id": "departureDate", "label": "Fecha de salida prevista", "type": "date", "required": true },
+        { "id": "stayAddress", "label": "Dirección de estadía en USA", "type": "text", "required": true },
+        { "id": "payingForTrip", "label": "¿Quién paga el viaje?", "type": "text", "required": true }
+      ]
+    },
+    {
+      "id": "employment",
+      "name": "Información Laboral",
+      "fields": [
+        { "id": "occupation", "label": "Ocupación actual", "type": "text", "required": true },
+        { "id": "employerName", "label": "Nombre del empleador", "type": "text", "required": false },
+        { "id": "employerAddress", "label": "Dirección del empleador", "type": "text", "required": false },
+        { "id": "employerPhone", "label": "Teléfono del empleador", "type": "phone", "required": false },
+        { "id": "jobTitle", "label": "Título/Cargo", "type": "text", "required": false },
+        { "id": "startDate", "label": "Fecha de inicio", "type": "date", "required": false },
+        { "id": "monthlyIncome", "label": "Ingreso mensual (moneda local)", "type": "number", "required": false },
+        { "id": "duties", "label": "Descripción de tareas", "type": "textarea", "required": false }
+      ]
+    },
+    {
+      "id": "family",
+      "name": "Información Familiar",
+      "fields": [
+        { "id": "fatherSurname", "label": "Apellido del padre", "type": "text", "required": true },
+        { "id": "fatherGivenName", "label": "Nombre del padre", "type": "text", "required": true },
+        { "id": "fatherDOB", "label": "Fecha de nacimiento del padre", "type": "date", "required": false },
+        { "id": "fatherInUS", "label": "¿El padre está en USA?", "type": "boolean", "required": true },
+        { "id": "motherSurname", "label": "Apellido de la madre", "type": "text", "required": true },
+        { "id": "motherGivenName", "label": "Nombre de la madre", "type": "text", "required": true },
+        { "id": "motherDOB", "label": "Fecha de nacimiento de la madre", "type": "date", "required": false },
+        { "id": "motherInUS", "label": "¿La madre está en USA?", "type": "boolean", "required": true },
+        { "id": "relativesInUS", "label": "¿Tiene familiares en USA?", "type": "boolean", "required": true }
+      ]
+    },
+    {
+      "id": "security",
+      "name": "Preguntas de Seguridad",
+      "fields": [
+        { "id": "communicablDisease", "label": "¿Tiene enfermedad transmisible?", "type": "boolean", "required": true },
+        { "id": "mentalDisorder", "label": "¿Tiene desorden mental?", "type": "boolean", "required": true },
+        { "id": "drugAbuse", "label": "¿Abuso de drogas?", "type": "boolean", "required": true },
+        { "id": "arrested", "label": "¿Ha sido arrestado?", "type": "boolean", "required": true },
+        { "id": "visaDenied", "label": "¿Le han negado visa?", "type": "boolean", "required": true },
+        { "id": "deportation", "label": "¿Ha sido deportado?", "type": "boolean", "required": true },
+        { "id": "childCustody", "label": "¿Involucrado en custodia de menores?", "type": "boolean", "required": true },
+        { "id": "terrorism", "label": "¿Involucrado en terrorismo?", "type": "boolean", "required": true }
+      ]
+    }
+  ]
+}

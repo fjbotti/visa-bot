@@ -1,0 +1,29 @@
+{
+  "country": "Argentina",
+  "consulates": [
+    {
+      "id": "buenos-aires",
+      "name": "Buenos Aires",
+      "type": "Embassy",
+      "address": "Av. Colombia 4300, C1425GMN Buenos Aires",
+      "phone": "+54 11 5777-4533",
+      "website": "https://ar.usembassy.gov",
+      "appointmentUrl": "https://ais.usvisa-info.com/es-ar/niv",
+      "visaTypes": ["B1B2", "F1", "J1", "H1B", "L1", "K1"],
+      "notes": "Principal centro de visas para Argentina"
+    }
+  ],
+  "generalInfo": {
+    "paymentMethods": ["Banco Galicia", "Pago Fácil", "Rapipago"],
+    "mrfFee": {
+      "B1B2": 185,
+      "F1": 185,
+      "H1B": 205,
+      "L1": 205,
+      "K1": 265
+    },
+    "currency": "USD",
+    "typicalWaitTime": "60-120 días",
+    "interviewRequired": true
+  }
+}

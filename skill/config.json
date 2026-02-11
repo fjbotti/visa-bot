@@ -1,0 +1,51 @@
+{
+  "name": "visabot",
+  "version": "1.0.0",
+  "description": "Asistente de trámites de visa con monitoreo de turnos",
+  "author": "Persiscal",
+  
+  "supportedCountries": ["USA"],
+  "supportedVisaTypes": {
+    "USA": ["B1B2", "F1", "J1"]
+  },
+
+  "features": {
+    "dataCollection": true,
+    "slotMonitoring": true,
+    "automatedBooking": false,
+    "documentChecklist": true
+  },
+
+  "automation": {
+    "provider": "steel",
+    "fallbackToManual": true,
+    "steelConfig": {
+      "apiKeyPath": "~/.config/secrets/steel_api_key",
+      "sessionTimeout": 300000,
+      "proxy": false
+    }
+  },
+
+  "monitoring": {
+    "defaultInterval": "*/15 * * * *",
+    "maxActiveMonitors": 10,
+    "notifyOnSlotFound": true
+  },
+
+  "storage": {
+    "type": "json",
+    "path": "./storage",
+    "tramitesPath": "./storage/tramites",
+    "monitoringPath": "./storage/monitoring"
+  },
+
+  "messages": {
+    "language": "es",
+    "templatesPath": "./templates/messages"
+  },
+
+  "limits": {
+    "maxTramitesPerUser": 5,
+    "dataRetentionDays": 365
+  }
+}
